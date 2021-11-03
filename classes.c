@@ -113,15 +113,65 @@ bool class_add_child(struct oo_class *self, const char *parent, const char *chil
 bool hierarchy_add_child(struct oo_hierarchy *self, const char *parent, const char *child) {
   return class_add_child(self->root,parent,child);
 }
+bool class_is_child_of(const struct oo_class *self, const char *parent){
+  if(self->parent == NULL){
+    return false;
+  }
+  if(strcmp(self->parent->name,&parent)==0){
+    return true;
+  }
 
+  return class_is_child_of(self->parent,parent);
+}
+bool class_is_child_of_allTree(const struct oo_class *self, const char *parent,const char *child){
+  if(strcmp(self->name,&child)==0){
+    return class_is_child_of(self,parent);
+  }
+
+  for (size_t i=0 ; i< self->size ; ++i){
+    if(class_is_child_of_allTree(self->children[i],parent,child)){
+      return true;
+    }
+  }
+  return false;
+}
 bool hierarchy_is_child_of(const struct oo_hierarchy *self, const char *parent, const char *child) {
+  return class_is_child_of_allTree(self->root,parent,child);
+}
+bool class_delete(struct oo_class *self, const char *name){
+  if(strcmp(self->name,name)==0){
+    free(self);
+    return true;
+  }
+  for(size_t i=0; i<self->size ; ++i){
+    if(clas_delete(self->children[i]->name, name)){
+      return true;
+    }
+  }
   return false;
 }
-
 bool hierarchy_delete(struct oo_hierarchy *self, const char *name) {
+  return class_delete(self->root,name);
+}
+bool class_rename(struct oo_hierarchy *self, const char *old_name, const char *new_name){
+  if(strcmp(self->name,old_name)==0){
+    self->name = new_name;
+    return true;
+  }
+  for(size_t i=0; i<self->size ; ++i){
+    if(class_rename(self->children[i]->name, name)){
+      return true;
+    }
+  }
   return false;
 }
+bool hierarchy_rename(struct oo_hierarchy *self, const char *old_name, const char *new_name){
+  return class_rename(self-root,old_name,new_name);
+}
 
+bool hierarchy_move_as_child_of(struct oo_hierarchy *self, const char *name, const char *parent){
+  return false;//hierarchy_move();
+}
 bool hierarchy_add_path(struct oo_hierarchy *self, const char *path) {
   return false;
 }
