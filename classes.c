@@ -144,7 +144,7 @@ bool class_delete(struct oo_class *self, const char *name){
     return true;
   }
   for(size_t i=0; i<self->size ; ++i){
-    if(clas_delete(self->children[i]->name, name)){
+    if(class_delete(self->children[i]->name, name)){
       return true;
     }
   }
@@ -153,27 +153,74 @@ bool class_delete(struct oo_class *self, const char *name){
 bool hierarchy_delete(struct oo_hierarchy *self, const char *name) {
   return class_delete(self->root,name);
 }
-bool class_rename(struct oo_hierarchy *self, const char *old_name, const char *new_name){
+bool class_rename(struct oo_class *self, const char *old_name, const char *new_name){
   if(strcmp(self->name,old_name)==0){
     self->name = new_name;
     return true;
   }
   for(size_t i=0; i<self->size ; ++i){
-    if(class_rename(self->children[i]->name, name)){
+    if(class_rename(self->children[i]->name, old_name , new_name)){
       return true;
     }
   }
   return false;
 }
 bool hierarchy_rename(struct oo_hierarchy *self, const char *old_name, const char *new_name){
-  return class_rename(self-root,old_name,new_name);
+  return class_rename(self->root,old_name,new_name);
 }
 
 bool hierarchy_move_as_child_of(struct oo_hierarchy *self, const char *name, const char *parent){
   return false;//hierarchy_move();
 }
+bool class_add_path(struct oo_class *self,const char *path){
+  if(self==NULL){
+    return false;
+  }
+  const char delim[2] = "/";
+  char *token;
+  token = strtok(path, delim);
+
+  if (strcmp(token,"Object")==0){
+    token = strtok(NULL,delim);
+  }
+
+  struct oo_class curr = *self;
+
+  while (token!=NULL){
+    class_add(self, token);
+    curr=*self->children[0];
+    token = strtok(NULL,delim);
+  }
+
+  return true;
+}
 bool hierarchy_add_path(struct oo_hierarchy *self, const char *path) {
+  return class_add_path(self->root,path);
+}
+
+bool class_add_path_as_child_of(struct oo_class *self, const char *path, const char *parent){
+  if(strcmp(self->name,parent)==0){
+    const char delim[2] = "/";
+    char *token;
+    token = strtok(path, delim);
+    while (token!=NULL){
+      if(has_child_named(self,token)){
+        return false;
+      }
+      token = strtok(NULL,delim);
+    }
+    
+    return class_add_path(self,path);
+  }
+  for(size_t i=0; i<self->size ; ++i){
+    if(class_add_path_as_child_of(self->children[i],path,parent)){
+      return true;
+    }
+  }
   return false;
+}
+bool hierarchy_add_path_as_child_of(struct oo_hierarchy *self, const char *path, const char *parent){
+  return class_add_path_as_child_of(self->root, path, parent);
 }
 
 char *hierarchy_get_path_to(const struct oo_hierarchy *self, const char *name) {
@@ -189,5 +236,5 @@ void hierarchy_print(const struct oo_hierarchy *self, FILE *out) {
 }
 
 bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *destination) {
-
+  return false;
 }
