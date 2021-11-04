@@ -83,6 +83,7 @@ void class_add(struct oo_class *self, const char *child) {
     self->children = children;
   }
   self->children[self->size]->name = child;
+  self->children[self->size]->parent= self;
   self->size += 1;
 }
 
@@ -93,18 +94,11 @@ bool class_add_child(struct oo_class *self, const char *parent, const char *chil
     return true;
   }
 
-  if(self->children == NULL){
-    return false;
-  }
-
   for (size_t i=0 ; i< self->size ; ++i){
 
-    if(strcmp(self->children[i]->name, &parent)==0){
-      class_add(self->children[i],child);
+    if(class_add_child(self->children[i] , &parent, &child)){
       return true;
     }
-    class_add_child(self->children[i] , &parent, &child);
-
   }
   return false;
 }
@@ -223,16 +217,54 @@ bool hierarchy_add_path_as_child_of(struct oo_hierarchy *self, const char *path,
   return class_add_path_as_child_of(self->root, path, parent);
 }
 
+char *class_get_path_to(const struct oo_class *self, const char *name){
+  char* res = NULL;
+  char* tmp = NULL;
+
+  size_t tailleRes=0;
+  size_t tailleNom=0;
+
+  if(strcmp(self->name,name)==0){
+    struct oo_class *curr = self;
+    do{
+      tailleRes = strlen(res);
+      tailleNom = strlen(curr->name);
+      res = malloc(tailleRes + tailleNom + 1);
+      tmp = malloc(tailleRes);
+      strncpy(tmp,res,tailleRes);
+      strncpy(res,"/",1);
+      strncpy(res+1,curr->name,tailleNom);
+      strcpy(res + 1 + tailleNom,tmp);
+      curr = curr->parent;
+    }while(curr->parent !=NULL);
+    free(tmp);
+    return res;
+  }
+
+  for(size_t i=0; i<self->size ; ++i){
+    tmp = class_get_path_to(self->children[i], name);
+    if(tmp!=NULL){
+      return tmp;
+    }
+  }
+
+  return res;
+}
 char *hierarchy_get_path_to(const struct oo_hierarchy *self, const char *name) {
-  return NULL;
+  return class_get_path_to(self->root,name);
 }
 
 void hierarchy_sort(struct oo_hierarchy *self) {
 
 }
-
+void class_print(const struct oo_class *self, FILE *out){
+  printf("%c\n",class_get_path_to(self,self->name));
+  for(size_t i=0; i<self->size ; ++i){
+    class_print(self->children[i],out);
+  }
+}
 void hierarchy_print(const struct oo_hierarchy *self, FILE *out) {
-
+  class_print(self->root,out);
 }
 
 bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *destination) {
