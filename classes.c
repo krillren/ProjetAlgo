@@ -1,4 +1,4 @@
-#include "C:\DevC\Projet_algo_classe\classes.h"
+#include "classes.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -16,7 +16,7 @@ void libererChaineNom(char*nom) {
     free(nom);
 }
 char * strcatEN_MIEUX(char *res, char *nom,const char * delim) {
-    char* tmp=NULL;
+    char* tmp=malloc(1);
     size_t tailleRes=0;
     size_t tailleNom = 0;
     size_t tailleDelim = 0;
@@ -99,10 +99,30 @@ void class_destroy(struct oo_class *self){
 }
 // fonction rajouté
 
-
+bool class_delete(struct oo_class *self){
+  if (self != NULL) {
+    for (size_t i = 0; i < self->size; ++i) {
+        class_delete(self->children[i]);
+    }
+    if(self->parent!=NULL){
+        for (size_t i = 0; i < self->parent->size; ++i) {
+            
+                if (strcmp(self->parent->children[i]->name, self->name) == 0) {
+                    self->parent->children[i] = NULL;
+                }
+            }
+    }
+      
+      libererChaineNom(self->name);
+      free(self->children);
+      free(self);
+      return true;
+  }
+  
+  return false;
+}
 void hierarchy_destroy(struct oo_hierarchy *self) {
-  class_destroy(self->root);
-  self->root = NULL;
+  class_delete(self->root);
 }
 
 
@@ -130,6 +150,9 @@ size_t hierarchy_count_classes(const struct oo_hierarchy *self) {
 
 // fonction rajouté
 bool has_child_named(struct oo_class *self, const char *name){
+    if(strcmp(self->name, name) == 0){
+        return true;
+    }
   if(self->children == NULL){
     return false;
   }
@@ -249,24 +272,7 @@ bool hierarchy_is_child_of(const struct oo_hierarchy *self, const char *parent, 
 
   return class_is_child_of_allTree(self->root,parent,child);
 }
-bool class_delete(struct oo_class *self){
-  if (self != NULL) {
-      for (size_t i = 0; i < self->size; ++i) {
-          if (self->children[i] != NULL) {
-              class_delete(self->children[i]);
-          }
-      }
-      for (size_t i = 0; i < self->parent->size; ++i) {
-          if (strcmp(self->parent->children[i]->name, self->name) == 0) {
-              self->parent->children[i] = NULL;
-          }
-      }
-      free(self);
-      return true;
-  }
-  
-  return false;
-}
+
 bool class_delete_in_tree(struct oo_class * self, const char* name) {
     if (self != NULL) {
         if (strcmp(self->name, name) == 0) {
@@ -393,7 +399,7 @@ bool hierarchy_add_path(struct oo_hierarchy *self, const char *path) {
 }
 
 
-bool check_class_add_path_as_child(struct oo_hierarchy*hierarchy,struct oo_class* self, const char* path) {
+bool check_class_add_path_as_child(struct oo_hierarchy*hierarchy, const char* path) {
     const char delim[2] = "/";
     char* copy = creerChaineNom(path);
     char* token = NULL;
@@ -413,7 +419,7 @@ bool class_add_path_as_child_of(struct oo_hierarchy* hierarchy ,struct oo_class 
     
     if (self != NULL) {
         if (strcmp(self->name, parent) == 0) {
-            if (!(check_class_add_path_as_child(hierarchy,self,path))) {
+            if (!(check_class_add_path_as_child(hierarchy,path))) {
                 return false;
             }
             const char delim[2] = "/";
@@ -500,42 +506,43 @@ bool class_compare_lexico(struct oo_class* self1, struct oo_class* self2) {
     }
     return false;
 }
-void array_swap(struct oo_class** children, size_t i, size_t j) {
+void MYarray_swap(struct oo_class** children, size_t i, size_t j) {
     
     struct oo_class* tmp = children[i];
     children[i] = children[j];
     children[j] = tmp;
     
 }
-void array_quick_sort_partial(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
-    if (i < j) {
-        ptrdiff_t p = array_partition(children, i, j);
-        array_quick_sort_partial(children, i, p - 1);
-        array_quick_sort_partial(children, p + 1, j);
-    }
-}
-void array_quick_sort(struct oo_class** children, size_t n) {
-    if (children==NULL && n == 0) {
-        return;
-    }
-    array_quick_sort_partial(children, 0, n - 1);
-}
-ptrdiff_t array_partition(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
+ptrdiff_t MYarray_partition(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
     ptrdiff_t pivot_index = i;
     struct oo_class* pivot = children[pivot_index];
-    array_swap(children, pivot_index, j);
+    MYarray_swap(children, pivot_index, j);
     ptrdiff_t l = i;
     for (ptrdiff_t k = i; k < j; ++k) {
         if (class_compare_lexico(children[k],pivot)) {
-            array_swap(children, k, l);
+            MYarray_swap(children, k, l);
             ++l;
         }
     }
-    array_swap(children, l, j);
+    MYarray_swap(children, l, j);
     return l;
 }
+void MYarray_quick_sort_partial(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
+    if (i < j) {
+        ptrdiff_t p = MYarray_partition(children, i, j);
+        MYarray_quick_sort_partial(children, i, p - 1);
+        MYarray_quick_sort_partial(children, p + 1, j);
+    }
+}
+void MYarray_quick_sort(struct oo_class** children, size_t n) {
+    if (children==NULL || n == 0) {
+        return;
+    }
+    MYarray_quick_sort_partial(children, 0, n - 1);
+}
+
 void class_sort(struct oo_class* self) {
-    array_quick_sort(self->children, self->size);
+    MYarray_quick_sort(self->children, self->size);
     for (size_t i = 0; i < self->size; ++i) {
         if (self->children[i] != NULL) {
             class_sort(self->children[i]);
@@ -551,7 +558,9 @@ void hierarchy_sort(struct oo_hierarchy *self) {
 
 
 void class_print(const struct oo_class *self, FILE *out){
-  printf("%s\n",class_get_path_to(self,self->name));
+    char * res = class_get_path_to(self,self->name);
+  printf("%s\n",res);
+  free(res);
   for(size_t i=0; i<self->size ; ++i){
       if (self->children[i] != NULL) {
           class_print(self->children[i], out);
@@ -570,79 +579,4 @@ bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *d
   return false;
 }
 
-
-
-
-
-int main() {
-    struct oo_hierarchy hierarchy;
-
-    hierarchy_create(&hierarchy);
-
-
-    hierarchy_add_child(&hierarchy, "Object", "Enfant0");
-    hierarchy_add_child(&hierarchy, "Object", "Enfant1");
-    hierarchy_add_child(&hierarchy, "Enfant0", "Enfant01");
-    hierarchy_add_child(&hierarchy, "Enfant1", "Enfant10");
-    hierarchy_add_child(&hierarchy, "Enfant1", "Enfant11");
-    hierarchy_add_child(&hierarchy, "Enfant11", "Enfant110");
-    hierarchy_add_child(&hierarchy, "Enfant11", "Enfant111");
-    hierarchy_add_child(&hierarchy, "Enfant111", "Enfant1110");
-    hierarchy_print(&hierarchy, stdout);
-    hierarchy_add_child(&hierarchy, "Enfant111", "a");
-    hierarchy_add_child(&hierarchy, "Enfant111", "E");
-    hierarchy_add_child(&hierarchy, "Enfant111", "r");
-    hierarchy_add_child(&hierarchy, "Enfant111", "D");
-    hierarchy_add_child(&hierarchy, "Enfant111", "f");
-    hierarchy_add_child(&hierarchy, "Enfant111", "2");
-    hierarchy_add_child(&hierarchy, "Enfant111", "5");
-
-
-
-
-
-
-    printf("%d\n", hierarchy_count_classes(&hierarchy));
-    printf("%s\n", hierarchy_has_class(&hierarchy, "Object") ? "true" : "false");
-    // ecrire en ternaire pour toutes les fct renvoyant un booleen
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Object", "String") ? "true" : "false");
-    // besoin de printf pour les hierarchy add child ?
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Object", "Number") ? "true" : "false");
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Object", "Throwable") ? "true" : "false");
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Number", "Double") ? "true" : "false");
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Number", "Integer") ? "true" : "false");
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Throwable", "Exception") ? "true" : "false");
-    printf("%s\n", hierarchy_add_child(&hierarchy, "Throwable", "Error") ? "true" : "false");
-    printf("%s\n", hierarchy_add_path(&hierarchy, "Throwable/Error/test/mdr/wtf/pls") ? "true" : "false");
-    hierarchy_add_path_as_child_of(&hierarchy, "Throwable/Error/test/mdr/wtf/pls", "pls");
-    hierarchy_add_path_as_child_of(&hierarchy, "sdfsdfsdf/zzzzzzError/testdfsdf/mddddddr/wtfffffff", "pls");
-    hierarchy_print(&hierarchy, stdout);
-    
-    hierarchy_move_as_child_of(&hierarchy, "pls", "Object");
-    hierarchy_print(&hierarchy, stdout);
-    hierarchy_sort(&hierarchy);
-    hierarchy_print(&hierarchy, stdout);
-
-   
-    printf("%d\n", hierarchy_count_classes(&hierarchy)); // doit renvoyer 8
-    printf("%s\n", hierarchy_has_class(&hierarchy, "String") ? "true" : "false"); // doit renvoyer true;
-
-    printf("%s\n", hierarchy_is_child_of(&hierarchy, "Object", "Number") ? "true" : "false"); // doit renvoyer true
-    printf("%s\n", hierarchy_is_child_of(&hierarchy, "Number", "Double") ? "true" : "false"); // doit renvoyer true
-    printf("%s\n", hierarchy_is_child_of(&hierarchy, "Double", "Integer") ? "true" : "false"); // doit renvoyer false
-    printf("%s\n", hierarchy_rename(&hierarchy, "Integer", "Integer2") ? "true" : "false");
-    hierarchy_print(&hierarchy, stdout);
-    
-    printf("%s\n", hierarchy_has_class(&hierarchy, "Integer2") ? "true" : "false"); // doit renvoyer true si le rename a bien fonctionné
-    printf("%s\n", hierarchy_delete(&hierarchy, "Integer2") ? "true" : "false");
-    hierarchy_print(&hierarchy, stdout);
-    printf("%d\n", hierarchy_count_classes(&hierarchy)); // doit renvoyer 7
-    printf("%s\n", hierarchy_has_class(&hierarchy, "Integer2") ? "true" : "false"); // doit renvoyer false;
-    hierarchy_print(&hierarchy, stdout);
-    hierarchy_destroy(&hierarchy);
-    
-    printf("%s\n", "tout c'est bien passer");
-    
-    return 0;
-}
 
