@@ -5,21 +5,33 @@
 /*creerChaineNom
  *
  * const char*nom : pointeur vers le nom
+ * return : 
  *
- *return : 
  */
 
 /*strcatEN_MIEUX
  *
+ * char *res :
+ * char *nom :
+ * const char * delim : 
+ * return :
  *
- *return :
  */
 
 /*libererChaineNom
+ *
  * On libère le bloc mémoire alloué dynamiquement dans le tas.
  * char*nom : pointeur vers le nom 
  *
  */
+
+ /*DoublonChemin
+  *
+  * const char* haystack :
+  * const char* needle :
+  * return : faux si il n'y a pas de doublon, vrai sinon
+  *
+  */
 
 /*get_Child
  *
@@ -31,127 +43,210 @@
 
 /*class_destroy
  * 
- *
+ * struct oo_class *self: 
  *
  */
 
 /*class_delete
  *
- *
+ * struct oo_class *self: 
  *
  */
 
 /*child_count
+ * 
+ * struct oo_class *self: 
+ * return : le nombre d'enfant(s)
  *
- *return :
  */
 
  /*has_child_named
   *
-  *return :
+  * struct oo_class *self : 
+  * const char *name :
+  * return :
+  *
   */
 
  /*class_add
   *
+  * struct oo_class *self : 
+  * const char *child : 
   *
   */
 
  /*class_add_exist
-  *
+  * 
+  * struct oo_class* dest :
+  * struct oo_class* src : 
   *
   */
 
  /*class_add_child
   *
+  * struct oo_class *self :
+  * const char *parent :
+  * const char *child :
+  * return :
   *
   */
 
  /*class_is_child_of
   *
-  *return :
+  * struct oo_class *self :
+  * const char *parent :
+  * return :
+  *
   */
 
  /*class_is_child_of_allTree
   *
-  *return :
+  * struct oo_class *self :
+  * const char *parent :
+  * const char *child :
+  * return :
+  *
   */
 
  /*class_delete_in_tree
   *
-  *return : 
+  * struct oo_class * self :
+  * const char* name :
+  * return : return vrai si ça a réussit à supprimer, faux sinon
+  *
   */
 
  /*class_rename
   *
-  *return : 
+  * struct oo_class * self :
+  * const char* old_name : l'ancien nom 
+  * const char *new_name : le nouveau nom
+  * return : return vrai si ça a bien changé le nom, faux sinon
+  *
   */
 
  /*find_in_class
   *
-  *return :
+  * struct oo_class * self :
+  * const char* name : le nom de la classe qu'on cherche
+  * return :
+  *
   */
 
  /*find_in_hierarchy
   *
-  *return :
+  * struct oo_hierarchy* self :
+  * const char* name : le nom de la classe
+  * return : la fonction find_in_class en partant de self->root en paramètre
+  *
   */
 
  /*check_hierarchy_add_path
   *
-  *return :
+  * struct oo_hierarchy* self :
+  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
+  * return : vrai si on a bien ajouté le chemin, faux sinon
+  * 
   */
 
  /*check_class_add_path_as_child
   *
-  *return :
+  * struct oo_hierarchy* hierarchy :
+  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
+  * return :
+  *
   */
 
  /*class_add_path_as_child_of
   *
-  *return :
+  * struct oo_hierarchy* hierarchy :
+  * struct oo_class *self :
+  * const char* path :
+  * const char* parent :
+  * return :
+  *
   */
 
  /*class_get_path_to
   *
-  *return :
+  * const struct oo_class *self :
+  * const char *name :
+  * return :
+  *
   */
 
  /*class_compare_lexico
   * Fonction permet de comparer deux types classes léxicographiquement, en gérant les cas ou les classes sont NULL.
   * on considére qu'une classe NULL est classé après les classes non-vides.
   *
-  *return :
+  * struct oo_class* self1 : première classe
+  * struct oo_class* self2 : deuxième classe
+  * return : vrai si ce sont les deux mêmes classes (lexicographiquement), faux sinon
+  *
   */
 
  /*MYarray_swap
   *
+  * struct oo_class** children : 
+  * size_t i : taille du première enfant
+  * size_t j : taille du deuxième enfant
   *
   */
 
  /*MYarray_partition
   *
-  *return : 
+  * struct oo_class** children : 
+  * ptrdiff_t i :
+  * ptrdiff_t j :
+  * return : 
+  *
   */
 
  /*MYarray_quick_sort_partial
   *
+  * struct oo_class** children : 
+  * ptrdiff_t i :
+  * ptrdiff_t j :
   *
   */
 
  /*MYarray_quick_sort
   *
+  * struct oo_class** children : 
+  * size_t n : la taille
   *
   */
 
  /*class_sort
-  *
+  * 
+  * struct oo_class* self: 
   *
   */
 
  /*class_print
   *
-  *
+  * struct oo_class* self: 
+  * FILE *out :
+  * 
   */
+
+/*check_origin_path
+ *
+ * struct oo_hierarchy *self :
+ * const char *origin :
+ * return :
+ *
+ */
+
+/*check_destination_path
+ *
+ * struct oo_hierarchy *self :
+ * const char* destination :
+ * return :
+ *
+ */
+  
+
 
 
 char * creerChaineNom(const char* nom) {
