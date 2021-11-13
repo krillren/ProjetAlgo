@@ -2,6 +2,156 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*creerChaineNom
+ *
+ * const char*nom : pointeur vers le nom
+ *
+ *return : 
+ */
+
+/*strcatEN_MIEUX
+ *
+ *
+ *return :
+ */
+
+/*libererChaineNom
+ * On libère le bloc mémoire alloué dynamiquement dans le tas.
+ * char*nom : pointeur vers le nom 
+ *
+ */
+
+/*get_Child
+ *
+ * struct oo_class *self : notre arbre
+ * char* name : pointeur vers le nom de l'enfant 
+ * return : l'enfant dont le nom est passé en paramètre
+ *
+ */
+
+/*class_destroy
+ * 
+ *
+ *
+ */
+
+/*class_delete
+ *
+ *
+ *
+ */
+
+/*child_count
+ *
+ *return :
+ */
+
+ /*has_child_named
+  *
+  *return :
+  */
+
+ /*class_add
+  *
+  *
+  */
+
+ /*class_add_exist
+  *
+  *
+  */
+
+ /*class_add_child
+  *
+  *
+  */
+
+ /*class_is_child_of
+  *
+  *return :
+  */
+
+ /*class_is_child_of_allTree
+  *
+  *return :
+  */
+
+ /*class_delete_in_tree
+  *
+  *return : 
+  */
+
+ /*class_rename
+  *
+  *return : 
+  */
+
+ /*find_in_class
+  *
+  *return :
+  */
+
+ /*find_in_hierarchy
+  *
+  *return :
+  */
+
+ /*check_hierarchy_add_path
+  *
+  *return :
+  */
+
+ /*check_class_add_path_as_child
+  *
+  *return :
+  */
+
+ /*class_add_path_as_child_of
+  *
+  *return :
+  */
+
+ /*class_get_path_to
+  *
+  *return :
+  */
+
+ /*class_compare_lexico
+  * Fonction permet de comparer deux types classes léxicographiquement, en gérant les cas ou les classes sont NULL.
+  * on considére qu'une classe NULL est classé après les classes non-vides.
+  *
+  *return :
+  */
+
+ /*MYarray_swap
+  *
+  *
+  */
+
+ /*MYarray_partition
+  *
+  *return : 
+  */
+
+ /*MYarray_quick_sort_partial
+  *
+  *
+  */
+
+ /*MYarray_quick_sort
+  *
+  *
+  */
+
+ /*class_sort
+  *
+  *
+  */
+
+ /*class_print
+  *
+  *
+  */
 
 
 char * creerChaineNom(const char* nom) {
