@@ -29,6 +29,7 @@ char * strcatEN_MIEUX(char *res, char *nom,const char * delim) {
         tmp = malloc(tailleRes + 1);
         if (tmp != NULL) {
             strcpy(tmp, res);
+            libererChaineNom(res);
         }
     }
     else {
@@ -37,14 +38,17 @@ char * strcatEN_MIEUX(char *res, char *nom,const char * delim) {
 
     if (nom != NULL) {
         tailleNom = strlen(nom);
-        res = malloc(1 + tailleNom + tailleRes+1);
+        if (delim != NULL && strlen(delim) >= 1) {
+            tailleDelim = 1;
+            
+        }
+        res = malloc(tailleDelim +tailleNom + tailleRes+1);
 
         if (res!=NULL ) {
-            if (delim != NULL && strlen(delim) >= 1) {
-                tailleDelim = 1;
-                strncpy(res, delim, 1);
+            if(tailleDelim>=1){
+                 strncpy(res, delim, tailleDelim);
             }
-            
+           
             strncpy(res + tailleDelim, nom, tailleNom);
 
             if ( tmp!=NULL) {
@@ -54,7 +58,7 @@ char * strcatEN_MIEUX(char *res, char *nom,const char * delim) {
             res[tailleDelim + tailleNom + tailleRes] = '\0';
         }
 
-        free(tmp);
+        libererChaineNom(tmp);
         return res;
     }
     
@@ -625,10 +629,109 @@ void hierarchy_print(const struct oo_hierarchy *self, FILE *out) {
 
 
 
+char* check_origin_path(struct oo_hierarchy *self, const char *origin){
+    const char delim[2] = "/";
+    
+    char* copy = creerChaineNom(origin);
+    char* token=NULL;
+    char* token2=NULL;
+    token = strtok(copy, delim);
+    if(token==NULL){
+        libererChaineNom(copy);
+        return NULL;
+    }
+    
+    if (strcmp(token, "Object") == 0) {
+        token = strtok(NULL, delim);
+    }
+    struct oo_class* curr = self->root;
 
+    while (token != NULL && curr != NULL) {
+        if(DoublonChemin(origin,token)){
+            libererChaineNom(copy);
+            libererChaineNom(token2);
+            return NULL;
+        }
+        libererChaineNom(token2);
+        token2=creerChaineNom(token);
+        curr = getChild(curr, token);
+        token = strtok(NULL, delim);
+    }
+    
+    if (token == NULL&&curr!=NULL) {
+        libererChaineNom(copy);
+        return token2;
+    }
+    libererChaineNom(token2);
+    libererChaineNom(copy);
+    return NULL;
+}
+char* check_destination_path(struct oo_hierarchy *self, const char* destination){
+    const char delim[2] = "/";
+    
+    char* copy = creerChaineNom(destination);
+    char* token=NULL;
+    token = strtok(copy, delim);
+    if(token==NULL){
+        libererChaineNom(copy);
+        return NULL;
+    }
+    
+    if (strcmp(token, "Object") == 0) {
+        token = strtok(NULL, delim);
+    }
+    struct oo_class* curr = self->root;
+
+    while (token != NULL && curr != NULL && hierarchy_has_class(self, token)) {
+        if(DoublonChemin(destination,token)){
+            libererChaineNom(copy);
+            return NULL;
+        }
+        curr = getChild(curr, token);
+        if (curr!=NULL){
+            token = strtok(NULL, delim);
+        }
+        
+    }
+    
+    if (token != NULL) {
+        char*res=creerChaineNom(token);
+        if(strtok(copy, delim) != NULL){
+            libererChaineNom(copy);
+            libererChaineNom(res);
+            return NULL;
+        }
+        libererChaineNom(copy);
+        return res;
+    }
+    libererChaineNom(copy);
+    return NULL;
+}
 
 bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *destination) {
-  return false;
+    
+    struct oo_class* src = find_in_hierarchy(self,check_origin_path(self, origin));
+    struct oo_class* dest = find_in_hierarchy(self, check_destination_path(self , destination));
+    if (src == NULL || dest == NULL || src->parent==NULL||src == dest) {
+        return false;
+    }
+    for (size_t i = 0; i < src->parent->size; ++i) {
+        if (strcmp(src->parent->children[i]->name, src->name) == 0) {
+            src->parent->children[i] = NULL;
+        }
+    }
+    class_add_exist(dest, src);
+    char* copy = creerChaineNom(destination);
+    char* token=NULL;
+    char * token2=NULL;
+    token = strtok(copy, "/");
+    while (token != NULL) {
+        libererChaineNom(token2);
+        token2=creerChaineNom(token);
+        token = strtok(NULL, "/");
+    }
+    hierarchy_rename(self,src->name,token2);
+    return true;
 }
 
 
