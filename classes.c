@@ -35,43 +35,37 @@
 
 /*get_Child
  *
- * struct oo_class *self : notre arbre
+ * struct oo_class *self : un objet self de type oo_class
  * char* name : pointeur vers le nom de l'enfant 
  * return : l'enfant dont le nom est passé en paramètre
  *
  */
 
-/*class_destroy
- * 
- * struct oo_class *self: 
- *
- */
-
 /*class_delete
- *
- * struct oo_class *self: 
+ * Détruit la hiérarchie
+ * struct oo_class *self: un objet self de type oo_class
  *
  */
 
 /*child_count
  * 
- * struct oo_class *self: 
- * return : le nombre d'enfant(s)
+ * struct oo_class *self: un objet self de type oo_class
+ * return : le nombre d'enfant(s) dans la hiérarchie
  *
  */
 
  /*has_child_named
   *
-  * struct oo_class *self : 
-  * const char *name :
-  * return :
+  * struct oo_class *self : un objet self de type oo_class
+  * const char *name : pointeur vers la chaîne de caractère désignant le nom de l'enfant qu'on cherche
+  * return : vrai si on a un enfant name, faux sinon
   *
   */
 
  /*class_add
   *
-  * struct oo_class *self : 
-  * const char *child : 
+  * struct oo_class *self : un objet self de type oo_class
+  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant qu'on rajoute
   *
   */
 
@@ -84,42 +78,42 @@
 
  /*class_add_child
   *
-  * struct oo_class *self :
-  * const char *parent :
-  * const char *child :
-  * return :
+  * struct oo_class *self : un objet self de type oo_class
+  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
+  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant qu'on rajoute
+  * return : vrai si on a réussit à ajouter la classe, faux sinon
   *
   */
 
  /*class_is_child_of
   *
-  * struct oo_class *self :
-  * const char *parent :
-  * return :
+  * struct oo_class *self : un objet self de type oo_class
+  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
+  * return : vrai si la classe est bien enfant de *parent, faux sinon
   *
   */
 
  /*class_is_child_of_allTree
   *
-  * struct oo_class *self :
-  * const char *parent :
-  * const char *child :
-  * return :
+  * struct oo_class *self : un objet self de type oo_class
+  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
+  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant
+  * return : vrai si il n'y a qu'une seule branche, faux sinon
   *
   */
 
  /*class_delete_in_tree
   *
-  * struct oo_class * self :
-  * const char* name :
-  * return : return vrai si ça a réussit à supprimer, faux sinon
+  * struct oo_class * self : un objet self de type oo_class
+  * const char* name : pointeur vers la chaîne de caractère désignant le nom de la classe à supprimer
+  * return : vrai si ça a réussit à supprimer la classe, faux sinon
   *
   */
 
  /*class_rename
   *
-  * struct oo_class * self :
-  * const char* old_name : l'ancien nom 
+  * struct oo_class * self :un objet self de type oo_class
+  * const char* old_name : l'ancien nom / le nom actuel de la classe qu'on renomme
   * const char *new_name : le nouveau nom
   * return : return vrai si ça a bien changé le nom, faux sinon
   *
@@ -127,7 +121,7 @@
 
  /*find_in_class
   *
-  * struct oo_class * self :
+  * struct oo_class * self : un objet self de type oo_class
   * const char* name : le nom de la classe qu'on cherche
   * return :
   *
@@ -135,15 +129,15 @@
 
  /*find_in_hierarchy
   *
-  * struct oo_hierarchy* self :
-  * const char* name : le nom de la classe
+  * struct oo_hierarchy* self : un objet self de type oo_hierarchy 
+  * const char* name : le pointeur vers la chaîne de caractère désignant la classe qu'on cherche
   * return : la fonction find_in_class en partant de self->root en paramètre
   *
   */
 
  /*check_hierarchy_add_path
   *
-  * struct oo_hierarchy* self :
+  * struct oo_hierarchy* self : un objet self de type oo_hierarchy 
   * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
   * return : vrai si on a bien ajouté le chemin, faux sinon
   * 
@@ -151,7 +145,7 @@
 
  /*check_class_add_path_as_child
   *
-  * struct oo_hierarchy* hierarchy :
+  * struct oo_hierarchy* hierarchy : un objet hierarchy de type oo_hierarchy 
   * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
   * return :
   *
@@ -159,19 +153,19 @@
 
  /*class_add_path_as_child_of
   *
-  * struct oo_hierarchy* hierarchy :
-  * struct oo_class *self :
-  * const char* path :
-  * const char* parent :
+  * struct oo_hierarchy* hierarchy : un objet hierarchy de type oo_hierarchy 
+  * struct oo_class *self :un objet self de type oo_class
+  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
+  * const char* parent : le pointeur vers la chaîne de caractère désignant le parent
   * return :
   *
   */
 
  /*class_get_path_to
   *
-  * const struct oo_class *self :
-  * const char *name :
-  * return :
+  * const struct oo_class *self : un objet self de type oo_class
+  * const char *name : le pointeur vers la chaîne de caractère désignant la classe qu'on cherche
+  * return : le chemin jusqu'à la classe qu'on cherche 
   *
   */
 
@@ -187,7 +181,7 @@
 
  /*MYarray_swap
   *
-  * struct oo_class** children : 
+  * struct oo_class** children : un objet children de type oo_class
   * size_t i : taille du première enfant
   * size_t j : taille du deuxième enfant
   *
@@ -195,7 +189,7 @@
 
  /*MYarray_partition
   *
-  * struct oo_class** children : 
+  * struct oo_class** children : un objet children de type oo_class
   * ptrdiff_t i :
   * ptrdiff_t j :
   * return : 
@@ -204,7 +198,7 @@
 
  /*MYarray_quick_sort_partial
   *
-  * struct oo_class** children : 
+  * struct oo_class** children : un objet children de type oo_class
   * ptrdiff_t i :
   * ptrdiff_t j :
   *
@@ -212,36 +206,36 @@
 
  /*MYarray_quick_sort
   *
-  * struct oo_class** children : 
+  * struct oo_class** children : un objet children de type oo_class
   * size_t n : la taille
   *
   */
 
  /*class_sort
-  * 
-  * struct oo_class* self: 
+  * Trie la hiérarchie
+  * struct oo_class* self: un objet self de type oo_class
   *
   */
 
  /*class_print
   *
-  * struct oo_class* self: 
+  * struct oo_class* self: un objet self de type oo_class
   * FILE *out :
   * 
   */
 
 /*check_origin_path
  *
- * struct oo_hierarchy *self :
- * const char *origin :
+ * struct oo_hierarchy *self : un objet self de type oo_hierarchy
+ * const char *origin : le pointeur vers la chaîne de caractère désignant l'origine du chemin
  * return :
  *
  */
 
 /*check_destination_path
  *
- * struct oo_hierarchy *self :
- * const char* destination :
+ * struct oo_hierarchy *self : un objet self de type oo_hierarchy
+ * const char* destination : le pointeur vers la chaîne de caractère désignant la destination du chemin
  * return :
  *
  */
@@ -345,19 +339,6 @@ void hierarchy_create(struct oo_hierarchy *self) {
   }
 }
 
-
-// fonction rajouté
-void class_destroy(struct oo_class *self){
-  if (self->children == NULL){
-    free(self);
-    return;
-  }
-  for (size_t i=0 ; i<self->size ; ++i){
-      if (self->children[i] != NULL) {
-          class_destroy(self->children[i]);
-      }
-  }
-}
 // fonction rajouté
 
 bool class_delete(struct oo_class *self){
@@ -584,6 +565,7 @@ bool hierarchy_rename(struct oo_hierarchy *self, const char *old_name, const cha
     }
   return class_rename(self->root,old_name,new_name);
 }
+
 struct oo_class* find_in_class(struct oo_class* self, const char* name){
    
     if (self != NULL && name != NULL) {
