@@ -5,7 +5,7 @@
 /*creerChaineNom
  *
  * const char*nom : pointeur vers le nom
- * return : 
+ * return : la chaîne
  *
  */
 
@@ -34,7 +34,7 @@
   */
 
 /*get_Child
- *
+ * Renvoie l'enfant
  * struct oo_class *self : un objet self de type oo_class
  * char* name : pointeur vers le nom de l'enfant 
  * return : l'enfant dont le nom est passé en paramètre
@@ -70,9 +70,9 @@
   */
 
  /*class_add_exist
-  * 
-  * struct oo_class* dest :
-  * struct oo_class* src : 
+  * Fonction qu'on utilise à la fin de hierarchy_move_as_child_of qui sert à 
+  * struct oo_class* dest : un objet dest de type oo_class
+  * struct oo_class* src : un objet src de type oo_class
   *
   */
 
@@ -190,24 +190,24 @@
  /*MYarray_partition
   *
   * struct oo_class** children : un objet children de type oo_class
-  * ptrdiff_t i :
-  * ptrdiff_t j :
-  * return : 
+  * ptrdiff_t i : premier élément
+  * ptrdiff_t j : dernier élément
+  * return : l'élément pivot pour qu'on puisse faire un tri depuis cette élément dans MYarray_quick_sort_partial
   *
   */
 
  /*MYarray_quick_sort_partial
   *
   * struct oo_class** children : un objet children de type oo_class
-  * ptrdiff_t i :
-  * ptrdiff_t j :
+  * ptrdiff_t i : premier élément
+  * ptrdiff_t j : dernier élément
   *
   */
 
  /*MYarray_quick_sort
   *
   * struct oo_class** children : un objet children de type oo_class
-  * size_t n : la taille
+  * size_t n : la taille 
   *
   */
 
