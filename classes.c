@@ -4,156 +4,16 @@
 
 
 
-/*strcatEN_MIEUX
- *
- * char *res :
- * char *nom :
- * const char * delim : 
- * return :
- *
- */
-
-
- /*DoublonChemin
-  *
-  * const char* haystack :
-  * const char* needle :
-  * return : faux si il n'y a pas de doublon, vrai sinon
-  *
-  */
-
-
-
- /*class_add_exist
-  * Fonction qu'on utilise à la fin de hierarchy_move_as_child_of qui sert à 
-  * struct oo_class* dest : un objet dest de type oo_class
-  * struct oo_class* src : un objet src de type oo_class
-  *
-  */
-
-
- /*class_is_child_of_allTree
-  *
-  * struct oo_class *self : un objet self de type oo_class
-  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
-  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant
-  * return : vrai si il n'y a qu'une seule branche, faux sinon
-  *
-  */
-
-
- /*find_in_class
-  *
-  * struct oo_class * self : un objet self de type oo_class
-  * const char* name : le nom de la classe qu'on cherche
-  * return :
-  *
-  */
-
- /*find_in_hierarchy
-  *
-  * struct oo_hierarchy* self : un objet self de type oo_hierarchy 
-  * const char* name : le pointeur vers la chaîne de caractère désignant la classe qu'on cherche
-  * return : la fonction find_in_class en partant de self->root en paramètre
-  *
-  */
-
-
- /*check_hierarchy_add_path
-  *
-  * struct oo_hierarchy* self : un objet self de type oo_hierarchy 
-  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
-  * return : vrai si on a bien ajouté le chemin, faux sinon
-  * 
-  */
-
-
- /*check_class_add_path_as_child
-  *
-  * struct oo_hierarchy* hierarchy : un objet hierarchy de type oo_hierarchy 
-  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
-  * return :
-  *
-  */
-
-
- /*class_add_path_as_child_of
-  *
-  * struct oo_hierarchy* hierarchy : un objet hierarchy de type oo_hierarchy 
-  * struct oo_class *self :un objet self de type oo_class
-  * const char* path : le pointeur vers la chaîne de caractère désignant le chemin
-  * const char* parent : le pointeur vers la chaîne de caractère désignant le parent
-  * return :
-  *
-  */
-
- /*class_get_path_to
-  *
-  * const struct oo_class *self : un objet self de type oo_class
-  * const char *name : le pointeur vers la chaîne de caractère désignant la classe qu'on cherche
-  * return : le chemin jusqu'à la classe qu'on cherche 
-  *
-  */
-
-
- /*MYarray_swap
-  *
-  * struct oo_class** children : un objet children de type oo_class
-  * size_t i : taille du première enfant
-  * size_t j : taille du deuxième enfant
-  *
-  */
-
-
-
- /*class_print
-  *
-  * struct oo_class* self: un objet self de type oo_class
-  * FILE *out :
-  * 
-  */
-
-/*check_origin_path
- *
- * struct oo_hierarchy *self : un objet self de type oo_hierarchy
- * const char *origin : le pointeur vers la chaîne de caractère désignant l'origine du chemin
- * return :
- *
- */
-
-/*check_destination_path
- *
- * struct oo_hierarchy *self : un objet self de type oo_hierarchy
- * const char* destination : le pointeur vers la chaîne de caractère désignant la destination du chemin
- * return :
- *
- */
-  
-
-
-
-
-
-/*creerChaineNom
- *
- * const char*nom : pointeur vers le nom
- * return : la chaîne
- *
- */
 char * creerChaineNom(const char* nom) {
-    char * tmpc = malloc(strlen(nom) + 1);
-    if (tmpc != NULL) {
+    if(nom!=NULL){
+        char * tmpc = malloc(strlen(nom) + 1);
         strcpy(tmpc, nom);
+
+        return tmpc;
     }
-    return tmpc;
+    return NULL;
 }
 
-/*libererChaineNom
- *
- * On libère le bloc mémoire alloué dynamiquement dans le tas.
- * char*nom : pointeur vers le nom 
- *
- */
 void libererChaineNom(char*nom) {
     if(nom!=NULL){
         free(nom);
@@ -219,13 +79,6 @@ bool DoublonChemin(const char* haystack,const char*needle){
     return res;
 }
 
-/*get_Child
- * Renvoie l'enfant
- * struct oo_class *self : un objet self de type oo_class
- * char* name : pointeur vers le nom de l'enfant 
- * return : l'enfant dont le nom est passé en paramètre
- *
- */
 struct oo_class* getChild(struct oo_class* self, char* name) {
     for (size_t i = 0; i < self->size; ++i) {
         if (self->children[i] != NULL) {
@@ -250,11 +103,20 @@ void hierarchy_create(struct oo_hierarchy *self) {
 }
 
 
-/*class_delete
- * Détruit la hiérarchie
- * struct oo_class *self: un objet self de type oo_class
- *
- */
+// fonction rajouté
+void class_destroy(struct oo_class *self){
+  if (self->children == NULL){
+    free(self);
+    return;
+  }
+  for (size_t i=0 ; i<self->size ; ++i){
+      if (self->children[i] != NULL) {
+          class_destroy(self->children[i]);
+      }
+  }
+}
+// fonction rajouté
+
 bool class_delete(struct oo_class *self){
   if (self != NULL) {
     for (size_t i = 0; i < self->size; ++i) {
@@ -285,12 +147,7 @@ void hierarchy_destroy(struct oo_hierarchy *self) {
 }
 
 
-/*child_count
- * 
- * struct oo_class *self: un objet self de type oo_class
- * return : le nombre d'enfant(s) dans la hiérarchie
- *
- */
+// fonction rajouté
 size_t child_count(struct oo_class *self){
   size_t cpt=0;
   if (self != NULL) {
@@ -303,7 +160,7 @@ size_t child_count(struct oo_class *self){
   }
   return cpt;
 }
-
+// fonction rajouté
 
 size_t hierarchy_count_classes(const struct oo_hierarchy *self) {
   if (self != NULL && self->root != NULL) {
@@ -312,14 +169,7 @@ size_t hierarchy_count_classes(const struct oo_hierarchy *self) {
   return 0;
 }
 
-
- /*has_child_named
-  *
-  * struct oo_class *self : un objet self de type oo_class
-  * const char *name : pointeur vers la chaîne de caractère désignant le nom de l'enfant qu'on cherche
-  * return : vrai si on a un enfant name, faux sinon
-  *
-  */
+// fonction rajouté
 bool has_child_named(struct oo_class *self, const char *name){
     if(strcmp(self->name, name) == 0){
         return true;
@@ -339,18 +189,13 @@ bool has_child_named(struct oo_class *self, const char *name){
 
   return false;
 }
-
+// fonction rajouté
 
 bool hierarchy_has_class(const struct oo_hierarchy *self, const char *name) {
   return has_child_named(self->root, name);
 }
 
- /*class_add
-  *
-  * struct oo_class *self : un objet self de type oo_class
-  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant qu'on rajoute
-  *
-  */
+// fonction rajouté
 void class_add(struct oo_class *self, const char *child) {
   if (self->size == self->capacity) {
     self->capacity *= 2;
@@ -391,15 +236,6 @@ void class_add_exist(struct oo_class* dest, struct oo_class* src) {
     }
 }
 
-
- /*class_add_child
-  *
-  * struct oo_class *self : un objet self de type oo_class
-  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
-  * const char *child : pointeur vers la chaîne de caractère désignant la classe enfant qu'on rajoute
-  * return : vrai si on a réussit à ajouter la classe, faux sinon
-  *
-  */
 bool class_add_child(struct oo_class *self, const char *parent, const char *child){
     if (self != NULL) {
         if (strcmp(self->name, parent) == 0) {
@@ -418,7 +254,7 @@ bool class_add_child(struct oo_class *self, const char *parent, const char *chil
     }
   return false;
 }
-
+// fonction rajouté
 
 bool hierarchy_add_child(struct oo_hierarchy *self, const char *parent, const char *child) {
     if (hierarchy_has_class(self, child)) {
@@ -426,15 +262,6 @@ bool hierarchy_add_child(struct oo_hierarchy *self, const char *parent, const ch
     }
   return class_add_child(self->root,parent,child);
 }
-
-
- /*class_is_child_of
-  *
-  * struct oo_class *self : un objet self de type oo_class
-  * const char *parent : pointeur vers la chaîne de caractère désignant la classe parent
-  * return : vrai si la classe est bien enfant de *parent, faux sinon
-  *
-  */
 bool class_is_child_of(const struct oo_class *self, const char *parent){
   if(self->parent == NULL){
     return false;
@@ -467,13 +294,6 @@ bool hierarchy_is_child_of(const struct oo_hierarchy *self, const char *parent, 
   return class_is_child_of_allTree(self->root,parent,child);
 }
 
- /*class_delete_in_tree
-  *
-  * struct oo_class * self : un objet self de type oo_class
-  * const char* name : pointeur vers la chaîne de caractère désignant le nom de la classe à supprimer
-  * return : vrai si ça a réussit à supprimer la classe, faux sinon
-  *
-  */
 bool class_delete_in_tree(struct oo_class * self, const char* name) {
     if (self != NULL && strcmp(name,"Object")!=0) {
         if (strcmp(self->name, name) == 0) {
@@ -491,20 +311,9 @@ bool class_delete_in_tree(struct oo_class * self, const char* name) {
     }
     return false;
 }
-
 bool hierarchy_delete(struct oo_hierarchy *self, const char *name) {
   return class_delete_in_tree(self->root,name);
 }
-
-
- /*class_rename
-  *
-  * struct oo_class * self :un objet self de type oo_class
-  * const char* old_name : l'ancien nom / le nom actuel de la classe qu'on renomme
-  * const char *new_name : le nouveau nom
-  * return : return vrai si ça a bien changé le nom, faux sinon
-  *
-  */
 bool class_rename(struct oo_class *self, const char *old_name, const char *new_name){
     
     if (self != NULL) {
@@ -532,7 +341,6 @@ bool hierarchy_rename(struct oo_hierarchy *self, const char *old_name, const cha
     }
   return class_rename(self->root,old_name,new_name);
 }
-
 struct oo_class* find_in_class(struct oo_class* self, const char* name){
    
     if (self != NULL && name != NULL) {
@@ -734,15 +542,10 @@ char *hierarchy_get_path_to(const struct oo_hierarchy *self, const char *name) {
 
 
 
- /*class_compare_lexico
-  * Fonction permet de comparer deux types classes léxicographiquement, en gérant les cas ou les classes sont NULL.
-  * on considére qu'une classe NULL est classé après les classes non-vides.
-  *
-  * struct oo_class* self1 : première classe
-  * struct oo_class* self2 : deuxième classe
-  * return : vrai si ce sont les deux mêmes classes (lexicographiquement), faux sinon
-  *
-  */
+/*
+* fonction permet de comparer deux types classes léxicographiquement, en gérant les cas ou les classes sont NULL.
+* on considére qu'une classe NULL est classé après les classes non-vides.
+*/
 bool class_compare_lexico(struct oo_class* self1, struct oo_class* self2) {
     if (self1 == self2 ) {
         return false;
@@ -765,15 +568,6 @@ void MYarray_swap(struct oo_class** children, size_t i, size_t j) {
     children[j] = tmp;
     
 }
-
- /*MYarray_partition
-  *
-  * struct oo_class** children : un objet children de type oo_class
-  * ptrdiff_t i : premier élément
-  * ptrdiff_t j : dernier élément
-  * return : l'élément pivot pour qu'on puisse faire un tri depuis cette élément dans MYarray_quick_sort_partial
-  *
-  */
 ptrdiff_t MYarray_partition(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
     ptrdiff_t pivot_index = i;
     struct oo_class* pivot = children[pivot_index];
@@ -788,14 +582,6 @@ ptrdiff_t MYarray_partition(struct oo_class** children, ptrdiff_t i, ptrdiff_t j
     MYarray_swap(children, l, j);
     return l;
 }
-
- /*MYarray_quick_sort_partial
-  *
-  * struct oo_class** children : un objet children de type oo_class
-  * ptrdiff_t i : premier élément
-  * ptrdiff_t j : dernier élément
-  *
-  */
 void MYarray_quick_sort_partial(struct oo_class** children, ptrdiff_t i, ptrdiff_t j) {
     if (i < j) {
         ptrdiff_t p = MYarray_partition(children, i, j);
@@ -803,13 +589,6 @@ void MYarray_quick_sort_partial(struct oo_class** children, ptrdiff_t i, ptrdiff
         MYarray_quick_sort_partial(children, p + 1, j);
     }
 }
-
- /*MYarray_quick_sort
-  *
-  * struct oo_class** children : un objet children de type oo_class
-  * size_t n : la taille 
-  *
-  */
 void MYarray_quick_sort(struct oo_class** children, size_t n) {
     if (children==NULL || n == 0) {
         return;
@@ -817,11 +596,6 @@ void MYarray_quick_sort(struct oo_class** children, size_t n) {
     MYarray_quick_sort_partial(children, 0, n - 1);
 }
 
- /*class_sort
-  * Trie la hiérarchie
-  * struct oo_class* self: un objet self de type oo_class
-  *
-  */
 void class_sort(struct oo_class* self) {
     MYarray_quick_sort(self->children, self->size);
     for (size_t i = 0; i < self->size; ++i) {
@@ -894,7 +668,7 @@ char* check_origin_path(struct oo_hierarchy *self, const char *origin){
     libererChaineNom(copy);
     return NULL;
 }
-char* check_destination_path(struct oo_hierarchy *self, const char* destination){
+char* check_destination_path(struct oo_hierarchy *self, const char* destination, char* new_name){
     const char delim[2] = "/";
     
     char* copy = creerChaineNom(destination);
@@ -909,57 +683,48 @@ char* check_destination_path(struct oo_hierarchy *self, const char* destination)
         token = strtok(NULL, delim);
     }
     struct oo_class* curr = self->root;
-
-    while (token != NULL && curr != NULL && hierarchy_has_class(self, token)) {
+    while (token != NULL && curr != NULL && getChild(curr, token)!=NULL ) {
         if(DoublonChemin(destination,token)){
             libererChaineNom(copy);
             return NULL;
         }
-        curr = getChild(curr, token);
-        if (curr!=NULL){
+        
+        if (getChild(curr, token)!=NULL){
+            curr = getChild(curr, token);
             token = strtok(NULL, delim);
         }
         
     }
     
-    if (token != NULL) {
-        char*res=creerChaineNom(token);
-        if(strtok(copy, delim) != NULL){
-            libererChaineNom(copy);
-            libererChaineNom(res);
-            return NULL;
-        }
+    char * copytoken = creerChaineNom(token);
+    
+    if (token != NULL && strtok(NULL,delim)==NULL) {
+
+        strcpy(new_name,copytoken);
         libererChaineNom(copy);
-        return res;
+        return curr->name;
     }
     libererChaineNom(copy);
     return NULL;
 }
 
 bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *destination) {
-    
-    struct oo_class* src = find_in_hierarchy(self,check_origin_path(self, origin));
-    struct oo_class* dest = find_in_hierarchy(self, check_destination_path(self , destination));
-    if (src == NULL || dest == NULL || src->parent==NULL||src == dest) {
+    if(strcmp(origin,destination)==0){
+        return true;
+    }
+    char * src =check_origin_path(self,origin);
+    char * new_name = malloc(sizeof(destination));
+    const char * dest =check_destination_path(self,destination,new_name);
+
+    if(dest==NULL || src == NULL || (hierarchy_has_class(self,new_name) && strcmp(src,new_name)!=0)){
         return false;
     }
-    for (size_t i = 0; i < src->parent->size; ++i) {
-        if (strcmp(src->parent->children[i]->name, src->name) == 0) {
-            src->parent->children[i] = NULL;
-        }
-    }
-    class_add_exist(dest, src);
-    char* copy = creerChaineNom(destination);
-    char* token=NULL;
-    char * token2=NULL;
-    token = strtok(copy, "/");
-    while (token != NULL) {
-        libererChaineNom(token2);
-        token2=creerChaineNom(token);
-        token = strtok(NULL, "/");
-    }
-    hierarchy_rename(self,src->name,token2);
-    return true;
+    
+    bool done = hierarchy_move_as_child_of(self,src,dest) && hierarchy_rename(self,src,new_name);
+    
+
+    libererChaineNom(src);
+    return done;
 }
 
 
