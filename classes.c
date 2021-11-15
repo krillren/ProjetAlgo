@@ -668,7 +668,7 @@ char* check_origin_path(struct oo_hierarchy *self, const char *origin){
     libererChaineNom(copy);
     return NULL;
 }
-char* check_destination_path(struct oo_hierarchy *self, const char* destination, char* new_name){
+char* check_destination_path(struct oo_hierarchy *self, const char* destination){
     const char delim[2] = "/";
     
     char* copy = creerChaineNom(destination);
@@ -699,13 +699,27 @@ char* check_destination_path(struct oo_hierarchy *self, const char* destination,
     char * copytoken = creerChaineNom(token);
     
     if (token != NULL && strtok(NULL,delim)==NULL) {
-
-        strcpy(new_name,copytoken);
         libererChaineNom(copy);
+        libererChaineNom(copytoken);
         return curr->name;
     }
+    libererChaineNom(copytoken);
     libererChaineNom(copy);
     return NULL;
+}
+char * get_last_token(const char * path){
+    const char delim[2] = "/";
+    char* copy = creerChaineNom(path);
+    char* token=NULL;
+    token = strtok(copy, delim);
+    char * token2=creerChaineNom(token);
+    while (token != NULL){
+        libererChaineNom(token2);
+        token2=creerChaineNom(token);
+        token = strtok(NULL, delim);
+    }
+    libererChaineNom(copy);
+    return token2;
 }
 
 bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *destination) {
@@ -713,16 +727,19 @@ bool hierarchy_move(struct oo_hierarchy *self, const char *origin, const char *d
         return true;
     }
     char * src =check_origin_path(self,origin);
-    char * new_name = malloc(sizeof(destination));
-    const char * dest =check_destination_path(self,destination,new_name);
+    
+    const char * dest =check_destination_path(self,destination);
+    char * new_name = get_last_token(destination);
 
     if(dest==NULL || src == NULL || (hierarchy_has_class(self,new_name) && strcmp(src,new_name)!=0)){
+        libererChaineNom(new_name);
+        libererChaineNom(src);
         return false;
     }
     
     bool done = hierarchy_move_as_child_of(self,src,dest) && hierarchy_rename(self,src,new_name);
     
-
+    libererChaineNom(new_name);
     libererChaineNom(src);
     return done;
 }
